@@ -1,0 +1,80 @@
+#include <iostream>
+#include <vector>
+
+class TicTacToe {
+public:
+    TicTacToe() : board(9, ' '), currentPlayer('X') {}
+
+    void play() {
+        int move;
+        while (!isGameOver()) {
+            displayBoard();
+            std::cout << "Player " << currentPlayer << ", enter your move (1-9): ";
+            std::cin >> move;
+            makeMove(move);
+            changePlayer();
+        }
+        displayBoard();
+        if (isWin('X'))
+            std::cout << "Player X wins!" << std::endl;
+        else if (isWin('Y'))
+            std::cout << "Player Y wins!" << std::endl;
+        else
+            std::cout << "It's a draw!" << std::endl;
+    }
+
+private:
+    std::vector<char> board;
+    char currentPlayer;
+
+    bool isGameOver() const {
+        return isWin('X') || isWin('Y') || isBoardFull();
+    }
+
+    bool isWin(char player) const {
+        // Sprawdzenie wierszy i kolumn
+        for (int i = 0; i < 3; ++i) {
+            if ((board[i] == player && board[i + 3] == player && board[i + 6] == player) ||
+                (board[i * 3] == player && board[i * 3 + 1] == player && board[i * 3 + 2] == player))
+                return true;
+        }
+        // Sprawdzenie przekątnych
+        if ((board[0] == player && board[4] == player && board[8] == player) ||
+            (board[2] == player && board[4] == player && board[6] == player))
+            return true;
+        return false;
+    }
+
+    bool isBoardFull() const {
+        for (char cell : board) {
+            if (cell == ' ')
+                return false;
+        }
+        return true;
+    }
+
+    void displayBoard() const {
+        std::cout << "-------------" << std::endl;
+        for (int i = 0; i < 9; i += 3) {
+            std::cout << "| " << board[i] << " | " << board[i + 1] << " | " << board[i + 2] << " |" << std::endl;
+            std::cout << "-------------" << std::endl;
+        }
+    }
+
+    void makeMove(int move) {
+        if (move < 1 || move > 9 || board[move - 1] != ' ') {
+            std::cout << "Invalid move! Try again." << std::endl;
+            return;
+        }
+        board[move - 1] = currentPlayer;
+    }
+
+    void changePlayer() {
+        currentPlayer = (currentPlayer == 'X') ? 'Y' : 'X';
+    }
+};
+
+int main() {
+    TicTacToe game;
+    game.play();
+    return 0;
